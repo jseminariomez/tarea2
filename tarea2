@@ -1,0 +1,116 @@
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+class Libro {
+    private String isbn;
+    private String titulo;
+    private String autor;
+    private String genero;
+    private String editorial;
+    private LocalDate fechaPublicacion;
+    private int cantidadEnStock;
+
+    public Libro(String isbn, String titulo, String autor, String genero, String editorial, LocalDate fechaPublicacion, int cantidadEnStock) {
+        this.isbn = isbn;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.genero = genero;
+        this.editorial = editorial;
+        this.fechaPublicacion = fechaPublicacion;
+        this.cantidadEnStock = cantidadEnStock;
+    }
+
+    // Getters and setters
+}
+
+class Registro {
+    private LocalDate fechaRegistro;
+    private String isbnLibro;
+    private int cantidadRegistrada;
+
+    public Registro(LocalDate fechaRegistro, String isbnLibro, int cantidadRegistrada) {
+        this.fechaRegistro = fechaRegistro;
+        this.isbnLibro = isbnLibro;
+        this.cantidadRegistrada = cantidadRegistrada;
+    }
+
+    // Getters and setters
+}
+
+public class SistemaRegistroLibros {
+
+    private List<Libro> libros;
+    private List<Registro> registros;
+
+    public SistemaRegistroLibros() {
+        libros = new ArrayList<>();
+        registros = new ArrayList<>();
+    }
+
+    public void registrarLibro(Libro libro) {
+        libros.add(libro);
+    }
+
+    public void consultarLibros() {
+        for (Libro libro : libros) {
+            System.out.println("ISBN: " + libro.getIsbn());
+            System.out.println("Título: " + libro.getTitulo());
+            System.out.println("Autor: " + libro.getAutor());
+            System.out.println("Género: " + libro.getGenero());
+            System.out.println("Editorial: " + libro.getEditorial());
+            System.out.println("Fecha de publicación: " + libro.getFechaPublicacion());
+            System.out.println("Cantidad en stock: " + libro.getCantidadEnStock());
+            System.out.println("---------------------------------");
+        }
+    }
+
+    public void modificarLibro(String isbn, String nuevoTitulo, String nuevoAutor, String nuevoGenero, String nuevaEditorial, LocalDate nuevaFechaPublicacion, int nuevaCantidadEnStock) {
+        Libro libro = buscarLibroPorISBN(isbn);
+        if (libro != null) {
+            libro.setTitulo(nuevoTitulo);
+            libro.setAutor(nuevoAutor);
+            libro.setGenero(nuevoGenero);
+            libro.setEditorial(nuevaEditorial);
+            libro.setFechaPublicacion(nuevaFechaPublicacion);
+            libro.setCantidadEnStock(nuevaCantidadEnStock);
+            System.out.println("Libro modificado exitosamente");
+        } else {
+            System.out.println("No se encontró el libro con ISBN: " + isbn);
+        }
+    }
+
+    public void eliminarLibro(String isbn) {
+        libros.removeIf(libro -> libro.getIsbn().equals(isbn));
+        System.out.println("Libro eliminado exitosamente");
+    }
+
+    public void registrarEntrada(String isbn, int cantidad) {
+        Libro libro = buscarLibroPorISBN(isbn);
+        if (libro != null) {
+            libro.setCantidadEnStock(libro.getCantidadEnStock() + cantidad);
+            Registro registro = new Registro(LocalDate.now(), isbn, cantidad);
+            registros.add(registro);
+            System.out.println("Entrada registrada exitosamente");
+        } else {
+            System.out.println("No se encontró el libro con ISBN: " + isbn);
+        }
+    }
+
+    public void registrarSalida(String isbn, int cantidad) {
+        Libro libro = buscarLibroPorISBN(isbn);
+        if (libro != null) {
+            if (libro.getCantidadEnStock() >= cantidad) {
+                libro.setCantidadEnStock(libro.getCantidadEnStock() - cantidad);
+                Registro registro = new Registro(LocalDate.now(), isbn, -cantidad);
+                registros.add(registro);
+                System.out.println("Salida registrada exitosamente");
+            } else {
+                System.out.println("No hay suficientes ejemplares del libro en stock");
+            }
+        } else {
+            System.out.println("No se encontró el libro con ISBN: " + isbn);
+        }
+    }
+
+    private Libro buscarLibroPorISBN(String isbn
